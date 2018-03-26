@@ -1,9 +1,13 @@
 package com.example.x.listenme;
 
+//My GitHub
 
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -44,9 +48,8 @@ public class MainActivity extends FragmentActivity {
     boolean isShowText = false;
     final int REQUEST_CODE_OPEN_FILE = 6;
 
-    MediaPlayer player = new MediaPlayer();
+    static MediaPlayer player = new MediaPlayer();
     AudioManager audioManager;
-
 
     TextView txtFilePath, txtPosition, txtText, txtVolume;
     Button btnOpenFile, btnLRC, btnClear, btnForward, btnBack, btnRePlay, btnPlayOrPause, btnPre, btnNext, btnInsertPoint, btnDelPoint, btnShowText, btnVolumeUp, btnVolumeDown;
@@ -153,6 +156,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,7 +167,6 @@ public class MainActivity extends FragmentActivity {
 
         verifyStoragePermissions(this);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        //showVolume();
 
         imageViewProgress = findViewById(R.id.surfaceViewProgress);
         new ThreadProgress().start();
@@ -188,7 +191,7 @@ public class MainActivity extends FragmentActivity {
         btnVolumeUp = findViewById(R.id.btnVolumeUp);
         btnVolumeDown = findViewById(R.id.btnVolumeDown);
 
-        initCustom();
+        initCustomSetting();
 
         btnOpenFile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,7 +295,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         TextView txt = findViewById(R.id.textView2);
-        txt.setText(String.valueOf(keyCode) + "&&&" + event.toString());
+//        txt.setText(String.valueOf(keyCode) + "&&&" + event.toString());
         switch (keyCode) {
             case 67:
                 toRePlay();
@@ -346,10 +349,10 @@ public class MainActivity extends FragmentActivity {
             case 150:
                 toForward();
                 break;
-
-
+            case KeyEvent.KEYCODE_BACK: //不屏蔽返回建
+                super.onKeyDown(keyCode, event);
         }
-        return true;//super.onKeyDown(keyCode, event);
+        return true;
     }
 
     private void showVolume() {
@@ -446,11 +449,11 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onStop() {
-        stopCustom();
+        stopCustomSettings();
         super.onStop();
     }
 
-    private void stopCustom() {
+    private void stopCustomSettings() {
         String settingFileName = getApplicationContext().getFilesDir() + "/setting.txt";
         File file = new File(settingFileName);
         if (file.exists())
@@ -467,7 +470,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void initCustom() {
+    private void initCustomSetting() {
         String settingFileName = getApplicationContext().getFilesDir() + "/setting.txt";
         File file = new File(settingFileName);
 
@@ -478,6 +481,7 @@ public class MainActivity extends FragmentActivity {
                 BufferedReader bufferedReader = new BufferedReader(inputReader);
                 String line = bufferedReader.readLine();
                 strFilePath = line;
+                player.reset();
                 player.setDataSource(line);
                 player.prepare();
                 initPoint();
