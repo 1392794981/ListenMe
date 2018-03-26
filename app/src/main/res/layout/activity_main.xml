@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111"
+    tools:context="com.example.x.listenme.MainActivity">
+
+    <ImageView
+        android:id="@+id/surfaceViewProgress"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtFilePath" />
+
+
+    <Button
+        android:id="@+id/btnOpenFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/buttonstyle"
+        android:text="文件"
+        android:textColor="#555"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPosition" />
+
+    <Button
+        android:id="@+id/btnLRC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonstyle"
+        android:text="LRC"
+        android:textColor="#555"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnClear"
+        app:layout_constraintStart_toStartOf="@+id/btnOpenFile" />
+
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="清空"
+        android:textColor="#555"
+        app:layout_constraintStart_toEndOf="@+id/btnOpenFile"
+        app:layout_constraintTop_toBottomOf="@+id/btnOpenFile" />
+
+    <TextView
+        android:id="@+id/txtPosition"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="0dp"
+        android:text="0分00秒"
+        android:textColor="#555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/surfaceViewProgress" />
+
+    <TextView
+        android:id="@+id/txtFilePath"
+        android:layout_width="0dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="24dp"
+        android:text="文件路径："
+        android:textColor="#555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="回退"
+        android:textColor="#555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnForward"
+        app:layout_constraintTop_toTopOf="@+id/btnForward" />
+
+    <Button
+        android:id="@+id/btnRePlay"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="重放"
+        android:textColor="#555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnBack"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack" />
+
+    <Button
+        android:id="@+id/btnPlayOrPause"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="播放/暂停"
+        android:textColor="#555"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/btnRePlay"
+        app:layout_constraintTop_toBottomOf="@+id/btnRePlay" />
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="下一句"
+        android:textColor="#555"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/btnPlayOrPause"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayOrPause"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btnForward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="前进"
+        android:textColor="#555"
+        app:layout_constraintBottom_toBottomOf="@+id/btnOpenFile"
+        app:layout_constraintStart_toEndOf="@+id/btnOpenFile"
+        app:layout_constraintTop_toTopOf="@+id/btnOpenFile" />
+
+    <Button
+        android:id="@+id/btnPre"
+        android:layout_width="176dp"
+        android:layout_height="40dp"
+        android:background="@drawable/buttonstyle"
+        android:text="上一句"
+        android:textColor="#555"
+        app:layout_constraintBottom_toBottomOf="@+id/btnNext"
+        app:layout_constraintEnd_toEndOf="@+id/btnClear" />
+
+    <Button
+        android:id="@+id/btnInsertPoint"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="0dp"
+        android:background="@drawable/buttonstyle"
+        android:text="插入断点"
+        android:textColor="#555"
+        app:layout_constraintBottom_toTopOf="@+id/btnPre"
+        app:layout_constraintEnd_toEndOf="@+id/btnPre"
+        app:layout_constraintHorizontal_bias="0.875"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnDelPoint"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@drawable/buttonstyle"
+        android:text="删除断点"
+        android:textColor="#555"
+        app:layout_constraintBottom_toTopOf="@+id/btnInsertPoint"
+        app:layout_constraintEnd_toEndOf="@+id/btnInsertPoint"
+        app:layout_constraintStart_toStartOf="@+id/btnInsertPoint" />
+
+    <TextView
+        android:id="@+id/txtText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:text="/"
+        android:textColor="#555"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnShowText"
+        app:layout_constraintTop_toBottomOf="@+id/btnPre" />
+
+    <Button
+        android:id="@+id/btnShowText"
+        android:layout_width="46dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/buttonstyle"
+        android:text="原文"
+        android:textColor="#555"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPre"
+        app:layout_constraintVertical_bias="0.764" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        android:textColor="#fff"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnShowText"
+        app:layout_constraintTop_toTopOf="@+id/txtText" />
+
+    <Button
+        android:id="@+id/btnVolumeUp"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:background="@drawable/buttonstyle"
+        android:text="＋"
+        android:textColor="#555"
+        app:layout_constraintBottom_toTopOf="@+id/btnDelPoint"
+        app:layout_constraintStart_toStartOf="@+id/btnLRC"
+        app:layout_constraintTop_toBottomOf="@+id/btnLRC" />
+
+    <Button
+        android:id="@+id/btnVolumeDown"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:background="@drawable/buttonstyle"
+        android:text="—"
+        android:textColor="#555"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVolumeUp"
+        app:layout_constraintEnd_toEndOf="@+id/btnClear"
+        app:layout_constraintTop_toTopOf="@+id/btnVolumeUp"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="6"
+        android:textColor="#555"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVolumeUp"
+        app:layout_constraintEnd_toStartOf="@+id/btnVolumeDown"
+        app:layout_constraintStart_toEndOf="@+id/btnVolumeUp"
+        app:layout_constraintTop_toTopOf="@+id/btnVolumeUp" />
+
+</android.support.constraint.ConstraintLayout>
