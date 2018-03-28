@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.drm.DrmStore;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -51,11 +53,16 @@ public class MainActivity extends FragmentActivity {
     static MediaPlayer player = new MediaPlayer();
     AudioManager audioManager;
 
-    TextView txtFilePath, txtPosition, txtText, txtVolume;
+    TextView txtFilePath, txtPosition, txtText, txtVolume, txtTemp;
     Button btnOpenFile, btnLRC, btnClear, btnForward, btnBack, btnRePlay, btnPlayOrPause, btnPre, btnNext, btnInsertPoint, btnDelPoint, btnShowText, btnVolumeUp, btnVolumeDown;
+    Button btnSimple, btnComplex;
+    TextView txtShowTextInSecond;
+    Button btnShowTextInSecond, btnNextInSecond, btnAnotherNextInSecond, btnPreInSecond;
+
     ImageView imageViewProgress;
 
     SortedList pointList = new SortedList();
+    private View complexView, simpleView;
 
     static class HandlerProgress extends Handler {
         WeakReference<MainActivity> mActivity;
@@ -112,16 +119,26 @@ public class MainActivity extends FragmentActivity {
                                 str = str + " " + theActivity.pointList.getValueByPosition(i);
                             int m = (position / 1000) / 60;
                             int s = (position / 1000) % 60;
-                            theActivity.txtPosition.setText(String.valueOf(m) + "分" + String.valueOf(s) + "秒");
+                            long currentPoint = (long) list.getCurrentPoint();
+                            String currentPointString = String.valueOf((currentPoint / 1000) / 60) + "分" + String.valueOf((currentPoint / 1000) % 60) + "秒";
+                            theActivity.txtPosition.setText(currentPointString + "->" + String.valueOf(m) + "分" + String.valueOf(s) + "秒");
 
                             if (theActivity.isShowText) {
                                 theActivity.btnShowText.setText("隐藏");
+                                theActivity.btnShowTextInSecond.setText("隐");
                                 str = list.getCurrentDataString();
-                                if (str != null) theActivity.txtText.setText(str);
-                                else theActivity.txtText.setText("无");
+                                if (str != null) {
+                                    theActivity.txtText.setText(str);
+                                    theActivity.txtShowTextInSecond.setText(str);
+                                } else {
+                                    theActivity.txtText.setText("无");
+                                    theActivity.txtShowTextInSecond.setText("");
+                                }
                             } else {
                                 theActivity.btnShowText.setText("显示");
+                                theActivity.btnShowTextInSecond.setText("显");
                                 theActivity.txtText.setText("");
+                                theActivity.txtShowTextInSecond.setText("");
                             }
 
                             theActivity.txtFilePath.setText(theActivity.strFilePath);
@@ -156,6 +173,24 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    class KeyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                txtTemp.setText("好");
+                abortBroadcast();
+            }
+        }
+    }
+
+    private KeyBroadcastReceiver keyBroadcastReceiver; //= new KeyBroadcastReceiver(this);
+    private IntentFilter keyIntentFilter;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,33 +198,54 @@ public class MainActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_main);
+        complexView = getLayoutInflater().inflate(R.layout.activity_main, null);
+        simpleView = getLayoutInflater().inflate(R.layout.layout_simple, null);
+        setContentView(complexView);
 
         verifyStoragePermissions(this);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-        imageViewProgress = findViewById(R.id.surfaceViewProgress);
+        imageViewProgress = complexView.findViewById(R.id.surfaceViewProgress);
         new ThreadProgress().start();
 
-        txtFilePath = (TextView) findViewById(R.id.txtFilePath);
-        txtPosition = (TextView) findViewById(R.id.txtPosition);
-        txtText = findViewById(R.id.txtText);
-        txtVolume = findViewById(R.id.txtVolume);
+//        try {
+//            keyBroadcastReceiver = new KeyBroadcastReceiver();
+//            keyIntentFilter = new IntentFilter();
+//            keyIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+//            registerReceiver(keyBroadcastReceiver, keyIntentFilter);
+//        } catch (Exception e) {
+//            txtTemp.setText(e.getMessage());
+//        }
 
-        btnOpenFile = (Button) findViewById(R.id.btnOpenFile);
-        btnLRC = (Button) findViewById(R.id.btnLRC);
-        btnClear = (Button) findViewById(R.id.btnClear);
-        btnForward = (Button) findViewById(R.id.btnForward);
-        btnBack = (Button) findViewById(R.id.btnBack);
-        btnRePlay = (Button) findViewById(R.id.btnRePlay);
-        btnPlayOrPause = (Button) findViewById(R.id.btnPlayOrPause);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        btnPre = (Button) findViewById(R.id.btnPre);
-        btnDelPoint = (Button) findViewById(R.id.btnDelPoint);
-        btnInsertPoint = (Button) findViewById(R.id.btnInsertPoint);
-        btnShowText = findViewById(R.id.btnShowText);
-        btnVolumeUp = findViewById(R.id.btnVolumeUp);
-        btnVolumeDown = findViewById(R.id.btnVolumeDown);
+        txtFilePath = (TextView) complexView.findViewById(R.id.txtFilePath);
+        txtPosition = (TextView) complexView.findViewById(R.id.txtPosition);
+        txtText = complexView.findViewById(R.id.txtText);
+        txtVolume = complexView.findViewById(R.id.txtVolume);
+        txtTemp = complexView.findViewById(R.id.textView2);
+
+        btnOpenFile = (Button) complexView.findViewById(R.id.btnOpenFile);
+        btnLRC = (Button) complexView.findViewById(R.id.btnLRC);
+        btnClear = (Button) complexView.findViewById(R.id.btnClear);
+        btnForward = (Button) complexView.findViewById(R.id.btnForward);
+        btnBack = (Button) complexView.findViewById(R.id.btnBack);
+        btnRePlay = (Button) complexView.findViewById(R.id.btnRePlay);
+        btnPlayOrPause = (Button) complexView.findViewById(R.id.btnPlayOrPause);
+        btnNext = (Button) complexView.findViewById(R.id.btnNext);
+        btnPre = (Button) complexView.findViewById(R.id.btnPre);
+        btnDelPoint = (Button) complexView.findViewById(R.id.btnDelPoint);
+        btnInsertPoint = (Button) complexView.findViewById(R.id.btnInsertPoint);
+        btnShowText = complexView.findViewById(R.id.btnShowText);
+        btnVolumeUp = complexView.findViewById(R.id.btnVolumeUp);
+        btnVolumeDown = complexView.findViewById(R.id.btnVolumeDown);
+
+        btnSimple = complexView.findViewById(R.id.btnSimple);
+        btnComplex = simpleView.findViewById(R.id.btnComplex);
+
+        txtShowTextInSecond = simpleView.findViewById(R.id.txtShowTextInSecond);
+        btnNextInSecond = simpleView.findViewById(R.id.btnNextInSecond);
+        btnShowTextInSecond = simpleView.findViewById(R.id.btnShowTextInSecond);
+        btnPreInSecond = simpleView.findViewById(R.id.btnPreInSecond);
+        btnAnotherNextInSecond=simpleView.findViewById(R.id.btnAnotherNextInSecond);
 
         initCustomSetting();
 
@@ -290,67 +346,109 @@ public class MainActivity extends FragmentActivity {
                 toUpVolume();
             }
         });
+
+        btnSimple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setContentView(simpleView);
+            }
+        });
+
+        btnComplex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setContentView(complexView);
+            }
+        });
+
+        btnShowTextInSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toShowText();
+            }
+        });
+
+        btnNextInSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toNext();
+            }
+        });
+
+        btnAnotherNextInSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toNext();
+            }
+        });
+
+        btnPreInSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toPre();
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+//        txtTemp.setText(event.toString());
+        //本函数处理onkeydown无法处理的几个键
+        String characters = event.getCharacters();//返回全角字符
+        if (characters != null) {
+            switch (characters) {
+                case "＋":
+                    toPlayOrPause();
+                    break;
+                case "－":
+                    toRePlay();
+                    break;
+                case "＊":
+                    toForward();
+                    break;
+                case "／":
+                    toBack();
+                    break;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        TextView txt = findViewById(R.id.textView2);
-//        txt.setText(String.valueOf(keyCode) + "&&&" + event.toString());
+//        txtTemp.setText(String.valueOf(keyCode) + "&&&" + event.toString());
         switch (keyCode) {
-            case 67:
+            case KeyEvent.KEYCODE_VOLUME_UP: //音量键 上
                 toRePlay();
                 break;
-            case 152:
-                toRePlay();
-                break;
-            case 151:
-                toRePlay();
-                break;
-            case 24:
-                toRePlay();
+            case KeyEvent.KEYCODE_VOLUME_DOWN: //音量键 下
+                if ((!player.isPlaying()) && (pointList.getNextPoint() <= player.getCurrentPosition()))
+                    toRePlay();
+                else
+                    toPlayOrPause();
                 break;
 
-            case 61:
-                toPlayOrPause();
-                break;
-            case 66:
-                toPlayOrPause();
-                break;
-            case 149:
-                toPlayOrPause();
-                break;
-            case 25:
-                toPlayOrPause();
-                break;
-
-            case 153:
+            case KeyEvent.KEYCODE_NUMPAD_9:
                 toPre();
                 break;
-            case 147:
-                toNext();
-                break;
-            case 146:
-                toNext();
-                break;
-            case 145:
+            case KeyEvent.KEYCODE_NUMPAD_3:
                 toNext();
                 break;
 
-            case 144:
+            case KeyEvent.KEYCODE_NUMPAD_0:
                 toInsertPoint();
                 break;
-            case 158:
+            case KeyEvent.KEYCODE_NUMPAD_DOT:
                 toDelPoint();
                 break;
 
-            case 148:
-                toBack();
+            case KeyEvent.KEYCODE_NUMPAD_5:
+                toLRC();
                 break;
-            case 150:
-                toForward();
-                break;
+
             case KeyEvent.KEYCODE_BACK: //不屏蔽返回建
                 super.onKeyDown(keyCode, event);
+                break;
         }
         return true;
     }
@@ -449,8 +547,10 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onStop() {
-        stopCustomSettings();
         super.onStop();
+
+        stopCustomSettings();
+//        unregisterReceiver(keyBroadcastReceiver);
     }
 
     private void stopCustomSettings() {
