@@ -487,6 +487,9 @@ public class MainActivity extends FragmentActivity {
             case KeyEvent.KEYCODE_NUMPAD_2:
                 toSpeedDown();
                 break;
+            case KeyEvent.KEYCODE_NUMPAD_7:
+                toSpeedNormal();
+                break;
 
             case KeyEvent.KEYCODE_NUMPAD_5:
                 toLRC();
@@ -497,6 +500,11 @@ public class MainActivity extends FragmentActivity {
                 break;
         }
         return true;
+    }
+
+    private void toSpeedNormal() {
+        playSpeed=1;
+        setPlaySpeed();
     }
 
     private void toSpeedDown() {
