@@ -45,6 +45,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
 
+import static android.os.Environment.getExternalStorageDirectory;
+
 public class MainActivity extends FragmentActivity {
     String strFilePath;
     boolean isShowText = false;
@@ -52,6 +54,7 @@ public class MainActivity extends FragmentActivity {
 
     static MediaPlayer player = new MediaPlayer();
     AudioManager audioManager;
+    FileDialog fileDialog;
 
     TextView txtFilePath, txtPosition, txtText, txtVolume, txtTemp;
     Button btnOpenFile, btnLRC, btnClear, btnForward, btnBack, btnRePlay, btnPlayOrPause, btnPre, btnNext, btnInsertPoint, btnDelPoint, btnShowText, btnVolumeUp, btnVolumeDown;
@@ -173,18 +176,18 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    class KeyBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                txtTemp.setText("好");
-                abortBroadcast();
-            }
-        }
-    }
-
-    private KeyBroadcastReceiver keyBroadcastReceiver; //= new KeyBroadcastReceiver(this);
-    private IntentFilter keyIntentFilter;
+//    class KeyBroadcastReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+//                txtTemp.setText("好");
+//                abortBroadcast();
+//            }
+//        }
+//    }
+//
+//    private KeyBroadcastReceiver keyBroadcastReceiver; //= new KeyBroadcastReceiver(this);
+//    private IntentFilter keyIntentFilter;
 
     @Override
     protected void onStart() {
@@ -245,9 +248,24 @@ public class MainActivity extends FragmentActivity {
         btnNextInSecond = simpleView.findViewById(R.id.btnNextInSecond);
         btnShowTextInSecond = simpleView.findViewById(R.id.btnShowTextInSecond);
         btnPreInSecond = simpleView.findViewById(R.id.btnPreInSecond);
-        btnAnotherNextInSecond=simpleView.findViewById(R.id.btnAnotherNextInSecond);
+        btnAnotherNextInSecond = simpleView.findViewById(R.id.btnAnotherNextInSecond);
 
         initCustomSetting();
+
+        String dir = strFilePath.substring(0,strFilePath.lastIndexOf("/"));//"/storage/";//
+        File dialogDir=new File(dir);
+        if(!dialogDir.exists())
+            dialogDir=new File("/storage/");
+        Log.v("dir",dir);
+        txtTemp.setText(strFilePath+"\n"+ dir);
+
+        fileDialog = new FileDialog(this, dialogDir, ".mp3");
+        fileDialog.addFileListener(new FileDialog.FileSelectedListener() {
+            @Override
+            public void fileSelected(File file) {
+                strFilePath=file.getAbsolutePath();
+            }
+        });
 
         btnOpenFile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -539,10 +557,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void toOpenFile() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("audio/MP3");//设置类型，我这里是任意类型，任意后缀的可以这样写。
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_CODE_OPEN_FILE);
+        fileDialog.showDialog();
+//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//        intent.setType("audio/MP3");//设置类型，我这里是任意类型，任意后缀的可以这样写。
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//        startActivityForResult(intent, REQUEST_CODE_OPEN_FILE);
     }
 
     @Override
