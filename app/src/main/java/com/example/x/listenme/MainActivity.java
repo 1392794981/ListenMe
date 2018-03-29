@@ -2,6 +2,7 @@ package com.example.x.listenme;
 
 //My GitHub
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -44,12 +45,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 
-import static android.os.Environment.getExternalStorageDirectory;
+//import static android.os.Environment.getExternalStorageDirectory;
 
 public class MainActivity extends FragmentActivity {
     String strFilePath;
     boolean isShowText = false;
+    float playSpeed = 1.0f;
     final int REQUEST_CODE_OPEN_FILE = 6;
 
     static MediaPlayer player = new MediaPlayer();
@@ -58,6 +61,7 @@ public class MainActivity extends FragmentActivity {
 
     TextView txtFilePath, txtPosition, txtText, txtVolume, txtTemp;
     Button btnOpenFile, btnLRC, btnClear, btnForward, btnBack, btnRePlay, btnPlayOrPause, btnPre, btnNext, btnInsertPoint, btnDelPoint, btnShowText, btnVolumeUp, btnVolumeDown;
+    Button btnSpeedUp, btnSpeedDown;
     Button btnSimple, btnComplex;
     TextView txtShowTextInSecond;
     Button btnShowTextInSecond, btnNextInSecond, btnAnotherNextInSecond, btnPreInSecond;
@@ -74,6 +78,7 @@ public class MainActivity extends FragmentActivity {
             mActivity = new WeakReference<MainActivity>(activity);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void handleMessage(Message msg) {
             MainActivity theActivity = mActivity.get();
@@ -124,7 +129,7 @@ public class MainActivity extends FragmentActivity {
                             int s = (position / 1000) % 60;
                             long currentPoint = (long) list.getCurrentPoint();
                             String currentPointString = String.valueOf((currentPoint / 1000) / 60) + "分" + String.valueOf((currentPoint / 1000) % 60) + "秒";
-                            theActivity.txtPosition.setText(currentPointString + "->" + String.valueOf(m) + "分" + String.valueOf(s) + "秒");
+                            theActivity.txtPosition.setText(currentPointString + "->" + String.valueOf(m) + "分" + String.valueOf(s) + "秒 [速度：" + String.valueOf(theActivity.playSpeed) + "]");
 
                             if (theActivity.isShowText) {
                                 theActivity.btnShowText.setText("隐藏");
@@ -240,6 +245,8 @@ public class MainActivity extends FragmentActivity {
         btnShowText = complexView.findViewById(R.id.btnShowText);
         btnVolumeUp = complexView.findViewById(R.id.btnVolumeUp);
         btnVolumeDown = complexView.findViewById(R.id.btnVolumeDown);
+        btnSpeedDown = complexView.findViewById(R.id.btnSpeedDown);
+        btnSpeedUp = complexView.findViewById(R.id.btnSpeedUp);
 
         btnSimple = complexView.findViewById(R.id.btnSimple);
         btnComplex = simpleView.findViewById(R.id.btnComplex);
@@ -252,18 +259,18 @@ public class MainActivity extends FragmentActivity {
 
         initCustomSetting();
 
-        String dir = strFilePath.substring(0,strFilePath.lastIndexOf("/"));//"/storage/";//
-        File dialogDir=new File(dir);
-        if(!dialogDir.exists())
-            dialogDir=new File("/storage/");
-        Log.v("dir",dir);
-        txtTemp.setText(strFilePath+"\n"+ dir);
+        String dir = strFilePath.substring(0, strFilePath.lastIndexOf("/"));//"/storage/";//
+        File dialogDir = new File(dir);
+        if (!dialogDir.exists())
+            dialogDir = new File("/storage/");
+        Log.v("dir", dir);
+        //txtTemp.setText(strFilePath+"\n"+ dir);
 
         fileDialog = new FileDialog(this, dialogDir, ".mp3");
         fileDialog.addFileListener(new FileDialog.FileSelectedListener() {
             @Override
             public void fileSelected(File file) {
-                strFilePath=file.getAbsolutePath();
+                strFilePath = file.getAbsolutePath();
             }
         });
 
@@ -406,6 +413,20 @@ public class MainActivity extends FragmentActivity {
                 toPre();
             }
         });
+
+        btnSpeedUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toSpeedUp();
+            }
+        });
+
+        btnSpeedDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toSpeedDown();
+            }
+        });
     }
 
     @Override
@@ -460,6 +481,13 @@ public class MainActivity extends FragmentActivity {
                 toDelPoint();
                 break;
 
+            case KeyEvent.KEYCODE_NUMPAD_8:
+                toSpeedUp();
+                break;
+            case KeyEvent.KEYCODE_NUMPAD_2:
+                toSpeedDown();
+                break;
+
             case KeyEvent.KEYCODE_NUMPAD_5:
                 toLRC();
                 break;
@@ -469,6 +497,23 @@ public class MainActivity extends FragmentActivity {
                 break;
         }
         return true;
+    }
+
+    private void toSpeedDown() {
+        if (playSpeed > 0.11f)
+            playSpeed -= 0.1f;
+        setPlaySpeed();
+    }
+
+    private void setPlaySpeed() {
+        playSpeed = new BigDecimal(playSpeed).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();//四舍五入，保留一位小数
+        player.setPlaybackParams(player.getPlaybackParams().setSpeed(playSpeed));
+    }
+
+    private void toSpeedUp() {
+        if (playSpeed < 2.91)
+            playSpeed += 0.1f;
+        setPlaySpeed();
     }
 
     private void showVolume() {
@@ -594,6 +639,9 @@ public class MainActivity extends FragmentActivity {
         File file = new File(settingFileName);
 
         try {
+//            float speed= (float) 0.5;
+//            player.setPlaybackParams(player.getPlaybackParams().setSpeed(speed));
+
             if (file.exists()) {
                 InputStream inputStream = new FileInputStream(file);//读取输入流
                 InputStreamReader inputReader = new InputStreamReader(inputStream);//设置流读取方式
@@ -606,7 +654,7 @@ public class MainActivity extends FragmentActivity {
                 initPoint();
             }
         } catch (Exception e) {
-            android.util.Log.i("init", e.getMessage());
+            txtTemp.setText(e.getMessage());
         }
     }
 

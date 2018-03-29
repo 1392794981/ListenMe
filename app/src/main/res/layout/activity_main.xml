@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -148,13 +149,14 @@
 
     <Button
         android:id="@+id/btnPre"
-        android:layout_width="176dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="@drawable/buttonstyle"
         android:text="上一句"
         android:textColor="#555"
         app:layout_constraintBottom_toBottomOf="@+id/btnNext"
-        app:layout_constraintEnd_toEndOf="@+id/btnClear" />
+        app:layout_constraintEnd_toEndOf="@+id/btnClear"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnInsertPoint"
@@ -197,19 +199,16 @@
 
     <Button
         android:id="@+id/btnShowText"
-        android:layout_width="46dp"
+        android:layout_width="80dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="1dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
+
         android:background="@drawable/buttonstyle"
         android:text="原文"
         android:textColor="#555"
-
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnSpeedDown"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPre"
-        app:layout_constraintVertical_bias="0.764" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSpeedUp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -222,8 +221,10 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/btnShowText"
-        app:layout_constraintTop_toBottomOf="@+id/btnNext" />
+        app:layout_constraintTop_toBottomOf="@+id/btnNext"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btnVolumeUp"
@@ -241,8 +242,9 @@
         android:layout_width="70dp"
         android:layout_height="0dp"
         android:background="@drawable/buttonstyle"
-        android:text="—"
         android:textColor="#555"
+
+        android:text="—"
         app:layout_constraintBottom_toBottomOf="@+id/btnVolumeUp"
         app:layout_constraintEnd_toEndOf="@+id/btnClear"
         app:layout_constraintTop_toTopOf="@+id/btnVolumeUp"
@@ -276,5 +278,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txtPosition" />
+
+    <Button
+        android:id="@+id/btnSpeedUp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/buttonstyle"
+        android:text="︿"
+        android:textColor="#555"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPre" />
+
+    <Button
+        android:id="@+id/btnSpeedDown"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/buttonstyle"
+        android:text="﹀"
+        android:textColor="#555"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSpeedUp"
+        app:layout_constraintStart_toEndOf="@+id/btnSpeedUp"
+        app:layout_constraintTop_toTopOf="@+id/btnSpeedUp"
+        app:layout_constraintVertical_bias="0.7" />
 
 </android.support.constraint.ConstraintLayout>
