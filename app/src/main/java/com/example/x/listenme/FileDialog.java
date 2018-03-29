@@ -10,6 +10,8 @@ import android.app.Dialog;
 
 import android.content.DialogInterface;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 
 import android.support.v7.app.AlertDialog;
@@ -25,7 +27,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import java.util.List;
-
 
 
 class FileDialog {
@@ -61,13 +62,9 @@ class FileDialog {
     private String fileEndsWith;
 
 
-
     /**
-
      * @param activity
-
      * @param initialPath
-
      */
 
     public FileDialog(Activity activity, File initialPath) {
@@ -75,7 +72,6 @@ class FileDialog {
         this(activity, initialPath, null);
 
     }
-
 
 
     public FileDialog(Activity activity, File initialPath, String fileEndsWith) {
@@ -91,11 +87,8 @@ class FileDialog {
     }
 
 
-
     /**
-
      * @return file dialog
-
      */
 
     public Dialog createFileDialog() {
@@ -123,7 +116,6 @@ class FileDialog {
         }
 
 
-
         builder.setItems(fileList, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
@@ -149,15 +141,40 @@ class FileDialog {
         });
 
 
-
         dialog = builder.show();
+
+        //自下义内容
+        realOpenFileDialog = dialog;
+        realBuilder=builder;
+
+        setBackGroundColor(Color.argb(0xff,0x77,0x77,0x77));
+
+        WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
+        params.width=900;
+        params.height=1600;
+//        params.setColorMode(col);
+        dialog.getWindow().setAttributes(params);
+
+
+//
+//        builder.setView(vie)
 
         return dialog;
 
     }
 
+    public Dialog realOpenFileDialog = null;
+    public AlertDialog.Builder realBuilder=null;
 
+    public void setBackGroundColor(int color) {
+        if (realOpenFileDialog != null)
+            realOpenFileDialog.getWindow().setBackgroundDrawable(new ColorDrawable(color));
+    }
 
+    public void setTitle(String title){
+        if(realBuilder!=null)
+            realBuilder.setTitle(title);
+    }
 
 
     public void addFileListener(FileSelectedListener listener) {
@@ -167,13 +184,11 @@ class FileDialog {
     }
 
 
-
     public void removeFileListener(FileSelectedListener listener) {
 
         fileListenerList.remove(listener);
 
     }
-
 
 
     public void setSelectDirectoryOption(boolean selectDirectoryOption) {
@@ -183,13 +198,11 @@ class FileDialog {
     }
 
 
-
     public void addDirectoryListener(DirectorySelectedListener listener) {
 
         dirListenerList.add(listener);
 
     }
-
 
 
     public void removeDirectoryListener(DirectorySelectedListener listener) {
@@ -199,11 +212,8 @@ class FileDialog {
     }
 
 
-
     /**
-
      * Show file dialog
-
      */
 
     public void showDialog() {
@@ -211,7 +221,6 @@ class FileDialog {
         createFileDialog().show();
 
     }
-
 
 
     private void fireFileSelectedEvent(final File file) {
@@ -229,7 +238,6 @@ class FileDialog {
     }
 
 
-
     private void fireDirectorySelectedEvent(final File directory) {
 
         dirListenerList.fireEvent(new ListenerList.FireHandler<DirectorySelectedListener>() {
@@ -243,7 +251,6 @@ class FileDialog {
         });
 
     }
-
 
 
     private void loadFileList(File path) {
@@ -293,7 +300,6 @@ class FileDialog {
     }
 
 
-
     private File getChosenFile(String fileChosen) {
 
         if (fileChosen.equals(PARENT_DIR)) return currentPath.getParentFile();
@@ -301,7 +307,6 @@ class FileDialog {
         else return new File(currentPath, fileChosen);
 
     }
-
 
 
     private void setFileEndsWith(String fileEndsWith) {
@@ -313,11 +318,9 @@ class FileDialog {
 }
 
 
-
 class ListenerList<L> {
 
     private List<L> listenerList = new ArrayList<L>();
-
 
 
     public interface FireHandler<L> {
@@ -327,13 +330,11 @@ class ListenerList<L> {
     }
 
 
-
     public void add(L listener) {
 
         listenerList.add(listener);
 
     }
-
 
 
     public void fireEvent(FireHandler<L> fireHandler) {
@@ -349,13 +350,11 @@ class ListenerList<L> {
     }
 
 
-
     public void remove(L listener) {
 
         listenerList.remove(listener);
 
     }
-
 
 
     public List<L> getListenerList() {

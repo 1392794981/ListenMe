@@ -10,6 +10,8 @@
 
     <style name="AlertDialog">
         <!-- 最外层 -->
+        <item name="android:layout_width">800dp</item>
+        <item name="android:layout_height">1400dp</item>
         <item name="android:background">#444</item>
         <item name="textColorAlertDialogListItem">#aaa</item>
         <item name="android:textColorPrimary">#aaa</item>

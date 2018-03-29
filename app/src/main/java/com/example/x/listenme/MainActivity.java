@@ -4,14 +4,10 @@ package com.example.x.listenme;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.drm.DrmStore;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -59,7 +55,7 @@ public class MainActivity extends FragmentActivity {
     AudioManager audioManager;
     FileDialog fileDialog;
 
-    TextView txtFilePath, txtPosition, txtText, txtVolume, txtTemp;
+    TextView txtFilePath, txtPosition, txtText, txtTemp;//txtVolume,
     Button btnOpenFile, btnLRC, btnClear, btnForward, btnBack, btnRePlay, btnPlayOrPause, btnPre, btnNext, btnInsertPoint, btnDelPoint, btnShowText, btnVolumeUp, btnVolumeDown;
     Button btnSpeedUp, btnSpeedDown;
     Button btnSimple, btnComplex;
@@ -68,7 +64,7 @@ public class MainActivity extends FragmentActivity {
 
     ImageView imageViewProgress;
 
-    SortedList pointList = new SortedList();
+    SortedList pointList;
     private View complexView, simpleView;
 
     static class HandlerProgress extends Handler {
@@ -129,7 +125,8 @@ public class MainActivity extends FragmentActivity {
                             int s = (position / 1000) % 60;
                             long currentPoint = (long) list.getCurrentPoint();
                             String currentPointString = String.valueOf((currentPoint / 1000) / 60) + "分" + String.valueOf((currentPoint / 1000) % 60) + "秒";
-                            theActivity.txtPosition.setText(currentPointString + "->" + String.valueOf(m) + "分" + String.valueOf(s) + "秒 [速度：" + String.valueOf(theActivity.playSpeed) + "]");
+                            theActivity.txtPosition.setText(currentPointString + "->" + String.valueOf(m) + "分" + String.valueOf(s) + "秒"+
+                                    " ["+"音量:" +String.valueOf(theActivity.getCurrentVolume())+" 速度:" + String.valueOf(theActivity.playSpeed)+ "]");
 
                             if (theActivity.isShowText) {
                                 theActivity.btnShowText.setText("隐藏");
@@ -228,7 +225,7 @@ public class MainActivity extends FragmentActivity {
         txtFilePath = (TextView) complexView.findViewById(R.id.txtFilePath);
         txtPosition = (TextView) complexView.findViewById(R.id.txtPosition);
         txtText = complexView.findViewById(R.id.txtText);
-        txtVolume = complexView.findViewById(R.id.txtVolume);
+//        txtVolume = complexView.findViewById(R.id.txtVolume);
         txtTemp = complexView.findViewById(R.id.textView2);
 
         btnOpenFile = (Button) complexView.findViewById(R.id.btnOpenFile);
@@ -271,6 +268,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void fileSelected(File file) {
                 strFilePath = file.getAbsolutePath();
+                loadSound(strFilePath);
             }
         });
 
@@ -429,6 +427,17 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
+    private void loadSound(String soundFilePath) {
+        player.reset();
+        try {
+            player.setDataSource(soundFilePath);
+            player.prepare();
+            initPoint();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 //        txtTemp.setText(event.toString());
@@ -525,7 +534,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void showVolume() {
-        txtVolume.setText(String.valueOf(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)));
+        //txtVolume.setText(String.valueOf(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)));
     }
 
     private int getCurrentVolume() {
@@ -667,6 +676,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     protected void initPoint() {
+        pointList = new SortedList();
         pointList.insertByOrder(0);
         pointList.insertByOrder(player.getDuration());
     }
