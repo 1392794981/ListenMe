@@ -440,7 +440,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-//        txtTemp.setText(event.toString());
+        txtTemp.setText(event.toString());
         //本函数处理onkeydown无法处理的几个键
         String characters = event.getCharacters();//返回全角字符
         if (characters != null) {
@@ -464,7 +464,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        txtTemp.setText(String.valueOf(keyCode) + "&&&" + event.toString());
+        //txtTemp.setText(txtTemp.getText()+"\n&&&"+String.valueOf(keyCode) + "\n&&&" + event.toString());
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP: //音量键 上
                 toRePlay();
@@ -479,27 +479,54 @@ public class MainActivity extends FragmentActivity {
             case KeyEvent.KEYCODE_NUMPAD_9:
                 toPre();
                 break;
+            case KeyEvent.KEYCODE_PAGE_UP:
+                toPre();
+                break;
             case KeyEvent.KEYCODE_NUMPAD_3:
+                toNext();
+                break;
+            case KeyEvent.KEYCODE_PAGE_DOWN:
                 toNext();
                 break;
 
             case KeyEvent.KEYCODE_NUMPAD_0:
                 toInsertPoint();
                 break;
+            case KeyEvent.KEYCODE_INSERT:
+                toInsertPoint();
+                break;
             case KeyEvent.KEYCODE_NUMPAD_DOT:
+                toDelPoint();
+                break;
+            case KeyEvent.KEYCODE_FORWARD_DEL:
                 toDelPoint();
                 break;
 
             case KeyEvent.KEYCODE_NUMPAD_8:
                 toSpeedUp();
                 break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                toSpeedUp();
+                break;
             case KeyEvent.KEYCODE_NUMPAD_2:
                 toSpeedDown();
                 break;
-            case KeyEvent.KEYCODE_NUMPAD_7:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                toSpeedDown();
+                break;
+            case KeyEvent.KEYCODE_NUMPAD_1:
+                toSpeedNormal();
+                break;
+            case KeyEvent.KEYCODE_MOVE_END:
                 toSpeedNormal();
                 break;
 
+            case KeyEvent.KEYCODE_MOVE_HOME:
+                toLRC();
+                break;
+            case KeyEvent.KEYCODE_NUMPAD_7:
+                toLRC();
+                break;
             case KeyEvent.KEYCODE_NUMPAD_5:
                 toLRC();
                 break;
